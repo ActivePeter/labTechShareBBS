@@ -84,25 +84,27 @@ export function LoadPersonDetail(id) {
     return res;
   });
 }
-// export function UpdatePersonInfo(data) {
-//   return request_auth_required({
-//     method: "put",
-//     url: "/api/users/detail/",
-//     data
-//   }).then(res => {
-//     console.log("UpdatePersonInfo");
-//     console.log(res);
-//     // var result={};
-//     // switch(res.status){
-//     //   case 200:
-//     //     result.status=200;
-//     //     result.data=res.data.results;
-//     //     break;
-//     //   case 404:
-//     //     result.status=404;
-//     //     result.data=res.data;
-//     //     break;
-//     // }
-//     return res;
-//   });
-// }
+export function UpdatePersonInfo(data) {
+  console.log("UpdatePersonInfo");
+  console.log(data);
+  return request_auth_required({
+    method: "put",
+    url: "/api/users/detail/",
+    data
+  }).then(res => {
+    console.log("UpdatePersonInfo_back");
+    console.log(res);
+    // var result={};
+    // switch(res.status){
+    //   case 200:
+    //     result.status=200;
+    //     result.data=res.data.results;
+    //     break;
+    //   case 404:
+    //     result.status=404;
+    //     result.data=res.data;
+    //     break;
+    // }
+    return res;
+  });
+}

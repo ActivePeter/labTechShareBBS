@@ -58,7 +58,7 @@
                       <el-form-item label="用户名">
                         <el-input
                           v-model="form.username"
-                          style="width:200px;"
+                          style="width: 200px"
                         ></el-input>
                       </el-form-item>
                       <el-form-item label="入学年份">
@@ -83,26 +83,27 @@
                       <el-form-item label="专业">
                         <el-input
                           v-model="form.major"
-                          style="width:200px;"
+                          style="width: 200px"
                         ></el-input>
                       </el-form-item>
                       <el-form-item label="学号">
                         <el-input
                           v-model="form.student_id"
-                          style="width:200px;"
+                          style="width: 200px"
                         ></el-input>
                       </el-form-item>
                       <el-form-item label="教务处密码">
                         <el-input
                           v-model="form.student_pwd"
-                          style="width:200px;"
+                          style="width: 200px"
                         ></el-input>
                       </el-form-item>
                       <el-form-item label="同意打卡">
                         <el-switch
                           v-model="form.sure_to_clock"
                           active-color="#13ce66"
-                          inactive-color="#ff4949">
+                          inactive-color="#ff4949"
+                        >
                         </el-switch>
                       </el-form-item>
                       <el-form-item label="联系方式">
@@ -173,7 +174,6 @@
                             : "未知"
                         }}
                       </el-form-item>
-                      
 
                       <el-form-item label="联系方式">
                         <EditableInfoTable
@@ -195,7 +195,7 @@
                       </el-form-item>
                       <el-form-item label="个人介绍">
                         <el-card>
-                          <div style="white-space:pre">
+                          <div style="white-space: pre">
                             {{
                               personalData.introduction
                                 ? personalData.introduction
@@ -255,18 +255,18 @@ export default {
     //Carousel,
     //Selector,
     HorizonSpace,
-    EditableInfoTable
+    EditableInfoTable,
   },
   watch: {
     "$route.params.id"(newval, oldval) {
       this.loadPersonInfo();
-    }
+    },
   },
   mounted() {
     for (var i = 2000; i <= 2050; i++) {
       this.enrollTimeOptions.push({
         value: i,
-        label: i + ""
+        label: i + "",
       });
     }
     if (this.$store.getters.userinfo) {
@@ -275,7 +275,7 @@ export default {
     this.loadPersonInfo();
   },
   filters: {
-    getGender: function(value) {
+    getGender: function (value) {
       if (value == "male") {
         return "男";
       } else if (value == "female") {
@@ -283,7 +283,7 @@ export default {
       } else {
         return "未知";
       }
-    }
+    },
   },
   methods: {
     signStore() {
@@ -323,35 +323,35 @@ export default {
     onSubmit() {
       //console.log(this.form)
       this.beforeSubmitHandleData();
-      this.$store.dispatch("user/updateUserinfo", this.form).then(res => {
-        if (res) {
-          this.personalData = res;
-          this.editing = false;
-        } else {
-          this.$message.error(res.data.username[0]);
-        }
-      });
-      // UpdatePersonInfo(this.form).then(res => {
-      //   //$store.state.userinfo.id=res
-      //   //$store.state.userinfo.name=
-      //   if (res.status == 200) {
-      //     this.$store.commit("user/SET_USERINO", res.data.results);
-      //     //console.log("res",res)
-      //     this.personalData = res.data.results;
+      // this.$store.dispatch("user/updateUserinfo", this.form).then(res => {
+      //   if (res) {
+      //     this.personalData = res;
       //     this.editing = false;
-      //   } else if (res.status == 400) {
+      //   } else {
       //     this.$message.error(res.data.username[0]);
       //   }
       // });
+      UpdatePersonInfo(this.form).then((res) => {
+        //$store.state.userinfo.id=res
+        //$store.state.userinfo.name=
+        if (res.status == 200) {
+          this.$store.commit("user/SET_USERINFO", res.data.results);
+          //console.log("res",res)
+          this.personalData = res.data.results;
+          this.editing = false;
+        } else if (res.status == 400) {
+          this.$message.error(res.data.username[0]);
+        }
+      });
     },
     loadPersonInfo() {
-      LoadPersonInfo(this.$route.params.id).then(res => {
+      LoadPersonInfo(this.$route.params.id).then((res) => {
         this.personalData = res.data;
         if (this.personalData) {
           if (!this.personalData.contact) {
             this.personalData.contact = {
               contact: [],
-              website: []
+              website: [],
             };
           }
           //console.log(this.personalData.contact)
@@ -367,7 +367,7 @@ export default {
     },
     cancelEditInfo() {
       this.editing = false;
-    }
+    },
   },
   data() {
     return {
@@ -380,14 +380,14 @@ export default {
         gender: "",
         enrollment_time: null,
         student_id: "",
-        student_pwd:"",
-        sure_to_clock:false,
+        student_pwd: "",
+        sure_to_clock: false,
         contact: {
           contact: [],
-          website: []
+          website: [],
         },
         major: "",
-        introduction: ""
+        introduction: "",
       },
       personalData: {
         age: null,
@@ -400,21 +400,21 @@ export default {
         is_staff: null,
         is_superuser: null,
         last_login: null,
-        student_pwd:"",
-        sure_to_clock:false,
+        student_pwd: "",
+        sure_to_clock: false,
         contact: {
           contact: [],
-          website: []
+          website: [],
         },
         // student_id: "",
         major: "",
         sign: "",
         student_id: null,
-        username: null
+        username: null,
       },
-      enrollTimeOptions: []
+      enrollTimeOptions: [],
     };
-  }
+  },
 };
 </script>
 

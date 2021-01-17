@@ -1,6 +1,6 @@
 import axios from "axios";
 import context from "../main";
-var baseURL = "http://47.107.172.119/";
+var baseURL = "http://api.wuxd.top";
 // var baseURL = "http://127.0.0.1:8000/";
 
 export function request(config, timeout1 = 10000) {
