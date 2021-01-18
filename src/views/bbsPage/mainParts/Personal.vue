@@ -6,11 +6,7 @@
           <el-card :body-style="{ padding: '0px' }">
             <div class="head">
               <div class="headpic">
-                <img
-                  src="https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png"
-                  class="image"
-                  id="profile"
-                />
+                <img :src="profileUrl" class="image" id="profile" />
                 <div id="profileCover" @click="Profile_onClick">更改头像</div>
               </div>
               <div class="headinfo">
@@ -20,7 +16,11 @@
             <div>
               <el-container>
                 <el-aside width="200px">
-                  <el-menu default-active="4" class="el-menu-vertical-demo">
+                  <el-menu
+                    default-active="4"
+                    class="el-menu-vertical-demo"
+                    @select="handleSelect"
+                  >
                     <!-- @open="handleOpen" -->
                     <!-- @close="handleClose" -->
                     <el-menu-item index="4">
@@ -44,25 +44,31 @@
                         <i class="el-icon-s-comment"></i>
                         <span>消息</span>
                       </template>
-                      <el-menu-item index="1-1">回复</el-menu-item>
-                      <el-menu-item index="1-2">私信</el-menu-item>
+                      <el-menu-item index="2-1">回复</el-menu-item>
+                      <el-menu-item index="2-2">私信</el-menu-item>
                     </el-submenu>
                   </el-menu>
                 </el-aside>
                 <el-main>
                   <PersonalInfoPart
+                    v-if="selectedIndex == 4"
                     class="mainParts"
                     :personalData.sync="personalData"
                     :currentUserId="currentUserId"
                     @dataChanged="onPersonalDataChange"
                   />
+                  <ArticleListPart v-if="selectedIndex == 1" />
                 </el-main>
               </el-container>
             </div>
           </el-card>
         </el-main>
       </el-container>
-      <ProfileUploadPart ref="profileUploadPart" />
+      <ProfileUploadPart
+        ref="profileUploadPart"
+        :userId="currentUserId"
+        @onProfileUpdate="updataProfile"
+      />
       <!-- <div id="right_bar">
 
         <userBar/>
@@ -83,6 +89,7 @@ import { LoadPersonInfo } from "@/network/users";
 
 import ProfileUploadPart from "./personalParts/ProfileUploadPart";
 import PersonalInfoPart from "./personalParts/PersonalInfoPart";
+import ArticleListPart from "./personalParts/ArticleListPart";
 export default {
   name: "Home",
   components: {
@@ -92,6 +99,7 @@ export default {
     // EditableInfoTable,
     ProfileUploadPart,
     PersonalInfoPart,
+    ArticleListPart,
   },
   watch: {
     "$route.params.id"(newval, oldval) {
@@ -113,7 +121,10 @@ export default {
     signSet() {
       console.log("signSet");
     },
-
+    handleSelect(id) {
+      console.log(id);
+      this.selectedIndex = id;
+    },
     loadPersonInfo() {
       LoadPersonInfo(this.$route.params.id).then((res) => {
         this.personalData = res.data;
@@ -124,12 +135,31 @@ export default {
               website: [],
             };
           }
+          // // console.log(this.personalData.avatar);
+          // let blob = new Blob([this.personalData.avatar], {
+          //   type: "image/jpeg",
+          // });
+          this.updataProfile(this.personalData.avatar);
+          // this.profileUrl = "data:image/png;base64," +;
+          // console.log(this.personalData.avatar);
+          // console.log(blob);
           //console.log(this.personalData.contact)
           // this.form.contact = JSON.parse(
           //   JSON.stringify(this.personalData.contact || {})
           // );
         }
       });
+    },
+    updataProfile(profile) {
+      this.Global_profilePool.setProfile(this.currentUserId, profile);
+      // this.profileUrl = "data:image/png;base64," + profile;
+      if (profile) {
+        this.profileUrl = "data:image/png;base64," + profile;
+        this.Global_profilePool.setProfile(this.currentUserId, profile);
+      } else {
+        this.profileUrl =
+          "https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png";
+      }
     },
     onPersonalDataChange(data) {
       this.personalData = data;
@@ -148,6 +178,8 @@ export default {
   },
   data() {
     return {
+      profileUrl: "",
+      selectedIndex: "4",
       currentUserId: -1,
 
       sign: "",
@@ -226,6 +258,8 @@ export default {
   border-width: 3px;
   border-color: white;
   width: 100px;
+  min-width: 100px;
+  min-height: 100px;
   box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.5);
 }
 .head .headinfo {

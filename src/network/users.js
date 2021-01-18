@@ -1,4 +1,4 @@
-import { request, request_auth_required } from "@/network/request";
+import { request, request_auth_required, request_multipartFormData_authRequired } from "@/network/request";
 
 export function getUsersMultiData() {
   return request({
@@ -109,3 +109,42 @@ export function UpdatePersonInfo(data) {
   });
 }
 
+export function Profile_upload(id, fileName, blob) {
+  console.log("Profile_upload");
+  // console.log(id);
+  // console.log(data1);
+  let data = new FormData(); //创建form对象
+  data.append('avatar', blob);
+  return request_auth_required({
+    method: "post",
+    url: "/api/users/avatar/" + id + "/",
+    data
+  }).then(res => {
+    // console.log("Profile_upload_back");
+    console.log(res);
+    var result = {};
+    // switch(res.status){
+    //   case 200:
+    //     result.status=200;
+    //     result.data=res.data.results;
+    //     break;
+    //   case 404:
+    //     result.status=404;
+    //     result.data=res.data;
+    //     break;
+    // }
+    switch (res.status) {
+      case 200:
+        if (res.data.status == 0) {
+          result.status = 200;
+          result.profile = res.data.avatar;
+          break;
+        }
+
+      default:
+        result.status = 300;
+    }
+
+    return result;
+  });
+}

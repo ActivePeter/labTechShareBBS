@@ -5,7 +5,7 @@
 <script>
 import HorizonSpace from "@/views/components/common/HorizonSpace";
 export default {
-  name: "ArticlePart",
+  name: "ArticleListPart",
   components: {
     //Carousel,
     //Selector,

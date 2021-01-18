@@ -10,6 +10,9 @@ import hljs from "highlight.js";
 import "highlight.js/styles/googlecode.css"; // 样式文件
 import VueCropper from 'vue-cropper';
 
+import Global_profilePool from '@/global/Global_profilePool.vue'
+import Util from "@/assets/js/util.js";
+
 Vue.directive("highlight", function (el) {
   let blocks = el.querySelectorAll("pre code");
   blocks.forEach(block => {
@@ -21,6 +24,9 @@ Vue.use(ElementUI);
 Vue.use(VueCookies);
 
 Vue.config.productionTip = false;
+
+Vue.prototype.Global_profilePool = Global_profilePool;
+Vue.prototype.Util = Util;
 
 Vue.prototype.hasLoginData = function () {
   //changeData是函数名

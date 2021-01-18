@@ -46,7 +46,8 @@ export function request_auth_required(config, timeout1 = 10000) {
     baseURL: baseURL,
     timeout: timeout1
   });
-
+  console.log("request_auth_required");
+  console.log(config);
   instance.interceptors.request.use(
     config => {
       return config;

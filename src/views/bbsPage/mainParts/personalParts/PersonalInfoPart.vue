@@ -172,7 +172,7 @@ export default {
     },
   },
   mounted() {
-    console.log(this.form);
+    // console.log(this.form);
     for (var i = 2000; i <= 2050; i++) {
       this.enrollTimeOptions.push({
         value: i,

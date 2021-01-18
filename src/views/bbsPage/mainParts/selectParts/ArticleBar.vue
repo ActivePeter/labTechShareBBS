@@ -1,13 +1,10 @@
 <template>
   <div class="ArticleBar">
-    <div style="padding:4px;" class="head bottomShadowBox">
-      <div style="padding:10px;padding-right:10px" class="">
-        <img
-          class="headpic"
-          src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
-        />
+    <div style="padding: 4px" class="head bottomShadowBox">
+      <div style="padding: 10px; padding-right: 10px" class="">
+        <img class="headpic" :src="profileUrl" />
       </div>
-      <div style="width:100%; padding-top:10px;">
+      <div style="width: 100%; padding-top: 10px">
         <a
           :href="'/bbs/read/' + id"
           class="articleTitle"
@@ -16,7 +13,13 @@
           {{ title }}
         </a>
         <div
-          style="width:100%; display: flex;padding: 10px; padding-bottom:10px; justify-content:space-between;"
+          style="
+            width: 100%;
+            display: flex;
+            padding: 10px;
+            padding-bottom: 10px;
+            justify-content: space-between;
+          "
           class=""
         >
           <div v-if="authorInfo">
@@ -24,7 +27,7 @@
               size="mini"
               type="info"
               class="hoverShadow"
-              style="margin-right:10px;cursor:pointer"
+              style="margin-right: 10px; cursor: pointer"
               @click="gotoUserPage(authorInfo.id)"
             >
               {{ authorInfo.name }}</el-tag
@@ -46,65 +49,133 @@
 
 <script>
 import Util from "@/assets/js/util.js";
+import { LoadPersonInfo } from "@/network/users";
 export default {
   name: "ArticleBar",
   data() {
     return {
-      img: null
+      img: null,
+      profileUrl: "",
     };
+  },
+  mounted() {
+    Util.$on("GlobalMsg_profileUpdate", (id) => {
+      if (this.authorInfo.id == id) {
+        console.log("GlobalMsg_profileUpdate");
+        var profile = this.Global_profilePool.getProfile(id);
+        if (profile) {
+          // if (profile == "loading") {
+          //   return;
+          // } else
+          if (profile == "noProfile") {
+            this.profileUrl =
+              "https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png";
+            return;
+          }
+          this.profileUrl = "data:image/png;base64," + profile;
+        }
+      }
+      // this.loadProfile();
+    });
+    // console.log(this.authorInfo);
+    this.getProfile();
   },
   props: {
     simple: {
       type: Boolean,
       default() {
         return false;
-      }
+      },
     },
     authorInfo: {
       type: Object,
       default() {
         return null;
-      }
+      },
     },
     createTime: {
       type: String,
       default() {
         return "";
-      }
+      },
     },
     title: {
       type: String,
       default() {
         return "";
-      }
+      },
     },
     id: {
       type: Number,
       default() {
         return "";
-      }
-    }
+      },
+    },
   },
   filters: {
-    makeTime: function(value) {
+    makeTime: function (value) {
       var arr = value.split(":");
       if (arr.length > 1) {
         return arr[0].replace("T", " ") + ":" + arr[1];
       }
       return "";
-    }
+    },
   },
   methods: {
+    getProfile() {
+      var profile = this.Global_profilePool.getProfile(this.authorInfo.id);
+      if (!profile) {
+        LoadPersonInfo(this.authorInfo.id).then((res) => {
+          if (res.data) {
+            // // console.log(this.personalData.avatar);
+            // let blob = new Blob([this.personalData.avatar], {
+            //   type: "image/jpeg",
+            // });
+
+            if (res.data.avatar) {
+              // this.profileUrl = "data:image/png;base64," + res.data.avatar;
+              this.Global_profilePool.setProfile(
+                this.authorInfo.id,
+                res.data.avatar
+              );
+            } else {
+              this.Global_profilePool.setProfile(
+                this.authorInfo.id,
+                "noProfile"
+              );
+            }
+
+            // this.profileUrl = "data:image/png;base64," +;
+            // console.log(this.personalData.avatar);
+            // console.log(blob);
+            //console.log(this.personalData.contact)
+            // this.form.contact = JSON.parse(
+            //   JSON.stringify(this.personalData.contact || {})
+            // );
+          }
+        });
+      } else {
+        // if (profile == "loading") {
+        //   return;
+        // } else
+        if (profile == "noProfile") {
+          this.profileUrl =
+            "https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png";
+          return;
+        }
+        this.profileUrl = "data:image/png;base64," + profile;
+      }
+    },
     toRead(id) {
       console.log("toread/", this.$route.fullPath);
       this.$store.commit("setNeedBack", true);
       this.$router.push({
         path: "/bbs/read/" + id,
         name: "read",
-        params: { id: "" + id, back: this.$route.fullPath }
+        params: { id: "" + id, back: this.$route.fullPath },
       });
-    }
-  }
+    },
+  },
 };
 </script>
 

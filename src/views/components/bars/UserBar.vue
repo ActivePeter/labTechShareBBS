@@ -2,9 +2,7 @@
   <div class="userBar">
     <el-card shadow="hover">
       <div v-if="!$store.getters.isLogin">
-        <div class="middle">
-          一起在CUIT搞技术吧
-        </div>
+        <div class="middle">一起在CUIT搞技术吧</div>
         <HorizonSpace />
         <div class="middle">
           <el-button class="btn" round @click="ShowLogin()">登入</el-button>
@@ -15,14 +13,11 @@
         </div>
       </div>
       <div v-else>
-          <div class="head bottomShadowBox">
-            <img
-              src="https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png"
-              class="image"
-            />
-            <p class="username">{{ $store.getters.userinfo.username }}</p>
-          </div>
-        
+        <div class="head bottomShadowBox">
+          <img :src="profileUrl" class="image" />
+          <p class="username">{{ $store.getters.userinfo.username }}</p>
+        </div>
+
         <hr color="#EBEEF5" SIZE="1" style="margin: 0 -20px" />
         <HorizonSpace />
         <div class="btns">
@@ -39,7 +34,7 @@
               @click="toWrite()"
             ></el-button>
           </el-tooltip>
-          <el-button round style="width:100%;" @click="toPerson()"
+          <el-button round style="width: 100%" @click="toPerson()"
             >个人页</el-button
           >
         </div>
@@ -52,16 +47,50 @@
 <script>
 import HorizonSpace from "@/views/components/common/HorizonSpace";
 import LoginDialogue from "@/views/components/dialogues/Login";
+import { LoadPersonInfo } from "@/network/users";
+import Util from "@/assets/js/util.js";
+
 export default {
   name: "UserBar",
   components: {
     HorizonSpace,
-    LoginDialogue
+    LoginDialogue,
   },
   mounted() {
+    Util.$on("GlobalMsg_onLogin", (_) => {
+      console.log("GlobalMsg_onLogin");
+      this.loadProfile();
+    });
     // console.log(this.$store.getters.userinfo);
+    this.loadProfile();
   },
   methods: {
+    loadProfile() {
+      if (this.$store.getters.isLogin) {
+        LoadPersonInfo(this.$store.getters.userinfo.id).then((res) => {
+          if (res.data) {
+            // // console.log(this.personalData.avatar);
+            // let blob = new Blob([this.personalData.avatar], {
+            //   type: "image/jpeg",
+            // });
+            if (res.data.avatar) {
+              this.profileUrl = "data:image/png;base64," + res.data.avatar;
+            } else {
+              this.profileUrl =
+                "https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png";
+            }
+            // this.profileUrl = "data:image/png;base64," + res.data.avatar;
+            // this.profileUrl = "data:image/png;base64," +;
+            // console.log(this.personalData.avatar);
+            // console.log(blob);
+            //console.log(this.personalData.contact)
+            // this.form.contact = JSON.parse(
+            //   JSON.stringify(this.personalData.contact || {})
+            // );
+          }
+        });
+      }
+    },
     ShowLogin() {
       this.$refs.LoginDialogue.loginState = true;
       this.$refs.LoginDialogue.dialogVisible = true;
@@ -75,13 +104,14 @@ export default {
     },
     toWrite() {
       this.$router.push({ path: "/bbs/write" });
-    }
+    },
   },
   data() {
     return {
-      dialogVisible: false
+      dialogVisible: false,
+      profileUrl: "",
     };
-  }
+  },
 };
 </script>
 
