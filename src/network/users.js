@@ -108,3 +108,4 @@ export function UpdatePersonInfo(data) {
     return res;
   });
 }
+
