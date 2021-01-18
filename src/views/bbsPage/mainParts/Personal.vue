@@ -103,13 +103,14 @@ export default {
   },
   watch: {
     "$route.params.id"(newval, oldval) {
+      this.currentUserId = parseInt(newval);
       this.loadPersonInfo();
     },
   },
   mounted() {
-    if (this.$store.getters.userinfo) {
-      this.currentUserId = this.$store.getters.userinfo.id;
-    }
+    // if (this.$store.getters.userinfo) {
+    this.currentUserId = parseInt(this.$route.params.id);
+    // }
     this.loadPersonInfo();
   },
 
