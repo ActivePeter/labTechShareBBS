@@ -17,7 +17,7 @@
               <el-container>
                 <el-aside width="200px">
                   <el-menu
-                    default-active="4"
+                    :default-active="selectedIndex"
                     class="el-menu-vertical-demo"
                     @select="handleSelect"
                   >
@@ -39,14 +39,14 @@
                       <el-menu-item index="1-3">项目记录</el-menu-item>
                       <el-menu-item index="1-4">资源分享</el-menu-item> -->
                     </el-menu-item>
-                    <el-submenu v-if="this.$store.getters.userinfo" index="2">
+                    <!-- <el-submenu v-if="this.$store.getters.userinfo" index="2">
                       <template slot="title">
                         <i class="el-icon-s-comment"></i>
                         <span>消息</span>
                       </template>
                       <el-menu-item index="2-1">回复</el-menu-item>
                       <el-menu-item index="2-2">私信</el-menu-item>
-                    </el-submenu>
+                    </el-submenu> -->
                   </el-menu>
                 </el-aside>
                 <el-main>
@@ -57,7 +57,10 @@
                     :currentUserId="currentUserId"
                     @dataChanged="onPersonalDataChange"
                   />
-                  <ArticleListPart v-if="selectedIndex == 1" />
+                  <ArticleListPart
+                    v-if="selectedIndex == 1"
+                    :userId="currentUserId"
+                  />
                 </el-main>
               </el-container>
             </div>
@@ -103,11 +106,21 @@ export default {
   },
   watch: {
     "$route.params.id"(newval, oldval) {
+      console.log("idChanged");
       this.currentUserId = parseInt(newval);
       this.loadPersonInfo();
     },
+
+    selectedIndex(newV, oldV) {
+      console.log(newV);
+      this.changeClassByIndex(newV);
+    },
   },
   mounted() {
+    this.checkAndResetInvalidClass();
+    this.changeIndexByClass(this.$route.query.class);
+    console.log(this.$route.query);
+
     // if (this.$store.getters.userinfo) {
     this.currentUserId = parseInt(this.$route.params.id);
     // }
@@ -115,6 +128,70 @@ export default {
   },
 
   methods: {
+    fixArticlePageInRoute() {},
+    checkAndResetInvalidClass() {
+      //无效类别或无类别
+      if (
+        !this.$route.query.class ||
+        !this.classIsValid(this.$route.query.class)
+      ) {
+        var query1 = JSON.parse(JSON.stringify(this.$route.query)); //clone
+        query1.class = this.getDefaultClass();
+        this.$router.push({ path: this.$route.path, query: query1 });
+        // this.$route.query.class = "ss";
+      }
+    },
+
+    getDefaultClass() {
+      return "info";
+    },
+    classIsValid(class1) {
+      switch (class1) {
+        case this.getDefaultClass():
+        case "articles":
+          return true;
+        default:
+          return false;
+      }
+    },
+    changeClassToIfNeed(to) {
+      if (this.$route.query.class) {
+        if (this.$route.query.class == to) {
+          return;
+        }
+      }
+      var query1 = JSON.parse(JSON.stringify(this.$route.query)); //clone
+      query1.class = to;
+      if (to == "articles" && !query1.page) {
+        query1.page = 1;
+      } else if (query1.page) {
+        delete query1.page;
+      }
+      this.$router.push({ path: this.$route.path, query: query1 });
+    },
+    changeIndexByClass(class1) {
+      var to = "4";
+      switch (class1) {
+        case this.getDefaultClass():
+          break;
+        case "articles":
+          to = "1";
+          break;
+      }
+      this.selectedIndex = to;
+    },
+    changeClassByIndex(index) {
+      var to = this.getDefaultClass();
+      switch (index) {
+        case "4":
+          to = this.getDefaultClass();
+          break;
+        case "1":
+          to = "articles";
+          break;
+      }
+      this.changeClassToIfNeed(to);
+    },
     signStore() {
       console.log("signStore");
       this.signStored = this.sign;

@@ -24,7 +24,7 @@ const routes = [
   {
     path: '/lab',
     component: Lab,
-    meta:{
+    meta: {
       // 页面标题title
       title: '易控实验室'
     }
@@ -39,7 +39,7 @@ const routes = [
         // UserProfile 会被渲染在 User 的 <router-view> 中
         path: 'overview',
         component: BBS_Overview,
-        meta:{
+        meta: {
           // 页面标题title
           title: '首页'
         }
@@ -49,7 +49,7 @@ const routes = [
         // UserPosts 会被渲染在 User 的 <router-view> 中
         path: 'select',
         component: BBS_Select,
-        meta:{
+        meta: {
           // 页面标题title
           title: '检索'
         }
@@ -59,7 +59,7 @@ const routes = [
         // UserPosts 会被渲染在 User 的 <router-view> 中
         path: 'about',
         component: BBS_About,
-        meta:{
+        meta: {
           // 页面标题title
           title: '关于'
         }
@@ -81,7 +81,7 @@ const routes = [
         path: 'read/:id',
         name: 'read',
         component: BBS_Read,
-        meta:{
+        meta: {
           // 页面标题title
           title: '阅读'
         }
@@ -101,12 +101,13 @@ const routes = [
     meta: {
       title: '个人页',
       //requireAuth: true // 添加该字段，表示进入这个路由是需要登录的
-    }
+    },
+
   },
   {
     path: '/tools',
     component: Tools,
-    meta:{
+    meta: {
       // 页面标题title
       title: '工具'
     }
@@ -120,7 +121,7 @@ const routes = [
   {
     path: '/tools/health',
     component: Health,
-    meta:{
+    meta: {
       // 页面标题title
       title: '健康打卡'
     }
