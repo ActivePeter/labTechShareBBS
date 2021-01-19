@@ -6,6 +6,7 @@
         :title="item.title"
         :id="item.id"
         :createTime="item.created_time"
+        @removeArticle="removeArticleInList"
       />
       <hr color="#EBEEF5" SIZE="1" />
     </div>
@@ -18,18 +19,19 @@
           ></ArticleBar> -->
     <!-- <hr color="#EBEEF5" SIZE="1" /> -->
     <!-- </div>  -->
-
-    <el-pagination
-      class="bottomShadowBox"
-      id="pageSelectorBar"
-      background
-      layout="prev, pager, next"
-      :total="articleCount"
-      :page-size="10"
-      :current-page="page"
-      @current-change="articlePageChange"
-    >
-    </el-pagination>
+    <div>
+      <el-pagination
+        class="bottomShadowBox"
+        id="pageSelectorBar"
+        background
+        layout="prev, pager, next"
+        :total="articleCount"
+        :page-size="10"
+        :current-page="page"
+        @current-change="articlePageChange"
+      >
+      </el-pagination>
+    </div>
   </div>
   <!-- </el-card> -->
 </template>
@@ -70,6 +72,20 @@ export default {
     //console.log(this.dataBuff)
   },
   methods: {
+    removeArticleInList(id) {
+      var j, len;
+      for (j = 0, len = this.articleArray.length; j < len; j++) {
+        if (this.articleArray[j].id == id) {
+          this.articleArray.splice(j, 1);
+          if (this.articleArray.length == 0) {
+            if (this.page > 1) {
+              this.page--;
+            }
+          }
+          return;
+        }
+      }
+    },
     changePageInRoute(page) {
       var query1 = JSON.parse(JSON.stringify(this.$route.query));
       query1.page = page;
@@ -85,6 +101,9 @@ export default {
           case 200:
             this.articleCount = res.data.count;
             this.articleArray = res.data.results;
+            break;
+          case 300:
+            this.page = 1;
             break;
         }
       });
@@ -148,9 +167,26 @@ export default {
 
 <style scoped>
 #OutContainer {
+  position: relative;
   margin: -20px;
+  height: 100%;
+  padding-bottom: 70px;
+  /* margin-bottom: 100px; */
+  /* width: 100%; */
 }
 #pageSelectorBar {
   padding: 20px;
+  height: 70px;
+  position: absolute;
+  /* margin-top: 100%; */
+  /* margin-bottom: 0; */
+  left: 0;
+  right: 0;
+  bottom: -40px;
+  /* margin-left: 0; */
+  /* width: 100%; */
+}
+#spring {
+  /* height: 100%; */
 }
 </style>

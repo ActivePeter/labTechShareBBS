@@ -8,9 +8,20 @@
       {{ title }}
     </a>
     <div>
-      <el-tag size="mini" type="info" id="menuBtn" class="hoverShadow"
-        >...</el-tag
-      >
+      <el-dropdown @command="handleMenuCommand">
+        <el-tag size="mini" type="info" id="menuBtn" class="hoverShadow"
+          >...</el-tag
+        >
+        <el-dropdown-menu slot="dropdown">
+          <el-dropdown-item command="edit" icon="el-icon-edit">
+            编辑
+          </el-dropdown-item>
+          <el-dropdown-item command="delete" icon="el-icon-delete-solid">
+            删除
+          </el-dropdown-item>
+        </el-dropdown-menu>
+      </el-dropdown>
+
       <el-tag size="mini" type="info" class="hoverShadow">{{
         createTime | makeTime
       }}</el-tag>
@@ -20,6 +31,7 @@
 
 <script>
 import HorizonSpace from "@/views/components/common/HorizonSpace";
+import { DeletArticle } from "@/network/articles";
 export default {
   name: "PersonalArticleBar",
   components: {
@@ -47,6 +59,53 @@ export default {
     },
   },
   methods: {
+    handleMenuCommand(cmd) {
+      if (cmd == "edit") {
+        this.toEdit();
+      } else if (cmd == "delete") {
+        this.deleteArticle();
+      }
+    },
+    deleteArticle() {
+      this.$confirm("此操作将永久删除该文章, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "error",
+      })
+        .then(() => {
+          if (!this.deletingArticle) {
+            this.deletingArticle = true;
+            this.$message("正在删除");
+            DeletArticle(this.id).then((res) => {
+              switch (res.status) {
+                case 200:
+                  // this.$router.push({ path: "/bbs"});
+                  this.$message({
+                    message: "删除成功",
+                    type: "success",
+                  });
+                  this.$emit("removeArticle", this.id);
+                  // this.Util.$emit("removeArticleList");
+                  break;
+              }
+              this.deletingArticle = false;
+            });
+          }
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消删除",
+          });
+        });
+    },
+    toEdit() {
+      this.$router.push({
+        path: "/bbs/write/" + this.id,
+        name: "write",
+        params: { id: "" + this.id, back: true },
+      });
+    },
     toRead(id) {
       console.log("toread/", this.$route.fullPath);
       this.$store.commit("setNeedBack", true);
@@ -143,6 +202,7 @@ export default {
   justify-content: space-between;
 }
 #menuBtn {
+  cursor: pointer;
   margin-right: 10px;
 }
 </style>
