@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="info_body">
-      <el-form v-if="editing" ref="form" :model="form" label-width="80px">
+      <el-form v-if="editing" ref="form" :model="form" label-width="90px">
         <el-form-item label="用户名">
           <el-input v-model="form.username" style="width: 200px"></el-input>
         </el-form-item>

@@ -16,8 +16,9 @@
           style="
             width: 100%;
             display: flex;
-            padding: 10px;
-            padding-bottom: 10px;
+            padding-top: 10px;
+            padding-left: 10px;
+            padding-right: 10px;
             justify-content: space-between;
           "
           class=""
@@ -26,13 +27,13 @@
             <el-tag
               size="mini"
               type="info"
-              class="hoverShadow"
+              class="hoverShadow pretag"
               style="margin-right: 10px; cursor: pointer"
               @click="gotoUserPage(authorInfo.id)"
             >
               {{ authorInfo.name }}</el-tag
             >
-            <el-tag size="mini" type="info" class="hoverShadow">{{
+            <el-tag size="mini" type="info" class="hoverShadow pretag">{{
               createTime | makeTime
             }}</el-tag>
           </div>
@@ -204,5 +205,8 @@ export default {
 }
 .left_tags {
   margin-left: 10px;
+}
+.pretag {
+  margin-bottom: 10px;
 }
 </style>
