@@ -6,6 +6,7 @@
         :title="item.title"
         :id="item.id"
         :createTime="item.created_time"
+        :isSelf.sync="isSelf"
         @removeArticle="removeArticleInList"
       />
       <hr color="#EBEEF5" SIZE="1" />
@@ -120,6 +121,9 @@ export default {
   props: {
     userId: {
       type: Number,
+    },
+    isSelf: {
+      type: Boolean,
     },
     // editing: {
     //   //作用是请求的时候提供数据，还有整明为子集评论框

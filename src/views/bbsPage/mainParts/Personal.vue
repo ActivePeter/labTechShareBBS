@@ -7,7 +7,9 @@
             <div class="head">
               <div class="headpic">
                 <img :src="profileUrl" class="image" id="profile" />
-                <div id="profileCover" @click="Profile_onClick">更改头像</div>
+                <div v-if="isSelf" id="profileCover" @click="Profile_onClick">
+                  更改头像
+                </div>
               </div>
               <div class="headinfo">
                 <span id="name">{{ personalData.username }}</span>
@@ -53,12 +55,14 @@
                   <PersonalInfoPart
                     v-if="selectedIndex == 4"
                     class="mainParts"
+                    :isSelf.sync="isSelf"
                     :personalData.sync="personalData"
                     :currentUserId="currentUserId"
                     @dataChanged="onPersonalDataChange"
                   />
                   <ArticleListPart
                     v-if="selectedIndex == 1"
+                    :isSelf.sync="isSelf"
                     :userId="currentUserId"
                   />
                 </el-main>
@@ -110,13 +114,16 @@ export default {
       this.currentUserId = parseInt(newval);
       this.loadPersonInfo();
     },
-
+    "$store.getters.isLogin"(newV, oldV) {
+      this.updateIsSelf();
+    },
     selectedIndex(newV, oldV) {
       console.log(newV);
       this.changeClassByIndex(newV);
     },
   },
   mounted() {
+    this.updateIsSelf();
     this.checkAndResetInvalidClass();
     this.changeIndexByClass(this.$route.query.class);
     console.log(this.$route.query);
@@ -128,6 +135,13 @@ export default {
   },
 
   methods: {
+    updateIsSelf() {
+      if (!this.$store.getters.isLogin) {
+        this.isSelf = false;
+      } else {
+        this.isSelf = this.$route.params.id == this.$store.getters.userinfo.id;
+      }
+    },
     fixArticlePageInRoute() {},
     checkAndResetInvalidClass() {
       //无效类别或无类别
@@ -256,6 +270,8 @@ export default {
   },
   data() {
     return {
+      isSelf: false,
+
       profileUrl: "",
       selectedIndex: "4",
       currentUserId: -1,

@@ -3,6 +3,7 @@
     <el-dialog
       :title="loginState ? '登入' : '注册'"
       :visible.sync="dialogVisible"
+      :append-to-body="true"
       width="300px"
       :close-on-click-modal="false"
       @close="onClose()"

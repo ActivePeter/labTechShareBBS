@@ -5,14 +5,14 @@
         <div class="logo">
           <router-link to="/">
             <img
-              style="width:60px;"
+              style="width: 60px"
               src="~assets/img/echologo.png"
               alt="易控logo"
               v-if="this.islab()"
             />
           </router-link>
           <img
-            style="width:200px; margin-left:20px; margin-top:10px;"
+            style="width: 200px; margin-left: 20px; margin-top: 10px"
             src="~assets/img/CUITechs.png"
             alt="易控logo"
             v-if="!this.islab()"
@@ -81,9 +81,19 @@
             round
             @click="exit()"
             v-if="!islab() && $store.getters.isLogin"
-            style="margin-right:10px;"
+            style="margin-right: 10px"
             >退出</el-button
           >
+          <div v-if="!islab() && !$store.getters.isLogin && showLogin">
+            <el-button round @click="ShowLogin()" style="margin-right: 10px">
+              登入
+            </el-button>
+            <LoginDialogue
+              id="LoginDialogue"
+              v-if="!$store.getters.isLogin"
+              ref="LoginDialogue"
+            />
+          </div>
         </div>
       </div>
     </div>
@@ -92,35 +102,68 @@
 
 <script>
 import Util from "@/assets/js/util.js";
-
+import LoginDialogue from "@/views/components/dialogues/Login";
 export default {
   name: "NavMenu",
+  components: {
+    LoginDialogue,
+  },
   data() {
     return {
       token: "",
       navlist: [
         { id: "1", name: "首页", link: "/lab" },
         { id: "2", name: "易控成员", link: "/users" },
-        { id: "3", name: "易控课堂", link: "/class" }
-      ]
+        { id: "3", name: "易控课堂", link: "/class" },
+      ],
+      showLogin: false,
     };
   },
+  watch: {
+    "$store.getters.isLogin"(newV, oldV) {
+      // this.updateIsSelf();
+      if (!newV) {
+        console.log(this.$route);
+        if (this.$route.path.indexOf("/person/") == 0) {
+          this.showLogin = true;
+        } else {
+          this.showLogin = false;
+        }
+      } else {
+        this.showLogin = false;
+      }
+    },
+    "$route.path"(newval, oldval) {
+      if (
+        this.$route.path.indexOf("/person/") == 0 &&
+        !this.$store.getters.isLogin
+      ) {
+        this.showLogin = true;
+      } else {
+        this.showLogin = false;
+      }
+    },
+  },
   methods: {
+    ShowLogin() {
+      this.$refs.LoginDialogue.loginState = true;
+      this.$refs.LoginDialogue.dialogVisible = true;
+    },
     exit() {
       this.$confirm("确认要退出账号吗？")
-        .then(_ => {
+        .then((_) => {
           this.$store.dispatch("user/resetStatus");
           this.$notify.info({
             title: "消息",
             message: "您已经退出账号",
-            duration: 2000
+            duration: 2000,
           });
           //这边做一个跳转
-          if (this.$route.matched.some(record => record.meta.requireAuth)) {
+          if (this.$route.matched.some((record) => record.meta.requireAuth)) {
             this.$router.push({ path: "/bbs/overview" });
           }
         })
-        .catch(_ => {});
+        .catch((_) => {});
     },
     toBBS() {
       this.$router.push({ path: "/bbs/overview" });
@@ -136,8 +179,8 @@ export default {
     },
     movepage1() {
       alert(5);
-    }
-  }
+    },
+  },
 };
 </script>
 

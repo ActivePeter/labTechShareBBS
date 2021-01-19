@@ -124,7 +124,7 @@
         </el-form-item>
       </el-form>
       <el-tooltip
-        v-if="!editing && currentUserId == this.$route.params.id"
+        v-if="!editing && isSelf"
         class="item"
         effect="dark"
         content="修改个人信息"
@@ -250,6 +250,9 @@ export default {
     },
     currentUserId: {
       type: Number,
+    },
+    isSelf: {
+      type: Boolean,
     },
     // editing: {
     //   //作用是请求的时候提供数据，还有整明为子集评论框

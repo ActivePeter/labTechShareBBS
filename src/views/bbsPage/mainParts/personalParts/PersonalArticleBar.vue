@@ -8,7 +8,7 @@
       {{ title }}
     </a>
     <div>
-      <el-dropdown @command="handleMenuCommand">
+      <el-dropdown v-if="isSelf" @command="handleMenuCommand">
         <el-tag size="mini" type="info" id="menuBtn" class="hoverShadow"
           >...</el-tag
         >
@@ -153,6 +153,9 @@ export default {
       default() {
         return "";
       },
+    },
+    isSelf: {
+      type: Boolean,
     },
     // editing: {
     //   //作用是请求的时候提供数据，还有整明为子集评论框
