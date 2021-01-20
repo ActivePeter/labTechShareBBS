@@ -63,18 +63,19 @@ export default {
     Util.$on("GlobalMsg_profileUpdate", (id) => {
       if (this.authorInfo.id == id) {
         console.log("GlobalMsg_profileUpdate");
-        var profile = this.Global_profilePool.getProfile(id);
-        if (profile) {
-          // if (profile == "loading") {
-          //   return;
-          // } else
-          if (profile == "noProfile") {
-            this.profileUrl =
-              "https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png";
-            return;
-          }
-          this.profileUrl = "data:image/png;base64," + profile;
-        }
+        this.getProfile();
+        // var profile = this.Global_profilePool.getProfile(id);
+        // if (profile) {
+        //   // if (profile == "loading") {
+        //   //   return;
+        //   // } else
+        //   if (profile == "noProfile") {
+        //     this.profileUrl =
+        //       "https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png";
+        //     return;
+        //   }
+        //   this.profileUrl = "data:image/png;base64," + profile;
+        // }
       }
       // this.loadProfile();
     });
@@ -124,49 +125,57 @@ export default {
   },
   methods: {
     getProfile() {
-      var profile = this.Global_profilePool.getProfile(this.authorInfo.id);
-      if (!profile) {
-        LoadPersonInfo(this.authorInfo.id).then((res) => {
-          if (res.data) {
-            // // console.log(this.personalData.avatar);
-            // let blob = new Blob([this.personalData.avatar], {
-            //   type: "image/jpeg",
-            // });
-
-            if (res.data.avatar) {
-              // this.profileUrl = "data:image/png;base64," + res.data.avatar;
-              this.Global_profilePool.setProfile(
-                this.authorInfo.id,
-                res.data.avatar
-              );
-            } else {
-              this.Global_profilePool.setProfile(
-                this.authorInfo.id,
-                "noProfile"
-              );
-            }
-
-            // this.profileUrl = "data:image/png;base64," +;
-            // console.log(this.personalData.avatar);
-            // console.log(blob);
-            //console.log(this.personalData.contact)
-            // this.form.contact = JSON.parse(
-            //   JSON.stringify(this.personalData.contact || {})
-            // );
-          }
-        });
-      } else {
-        // if (profile == "loading") {
-        //   return;
-        // } else
-        if (profile == "noProfile") {
-          this.profileUrl =
-            "https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png";
-          return;
-        }
-        this.profileUrl = "data:image/png;base64," + profile;
-      }
+      var profile = this.Global_profilePool.getProfileLazy(this.authorInfo.id);
+      // if (!profile) {
+      //   this.profileUrl = this.Global_profilePool.getDefaultProfileUrl();
+      // } else {
+      this.profileUrl = profile;
+      // }
     },
+    // getProfile() {
+    //   var profile = this.Global_profilePool.getProfile(this.authorInfo.id);
+    //   if (!profile) {
+    //     LoadPersonInfo(this.authorInfo.id).then((res) => {
+    //       if (res.data) {
+    //         // // console.log(this.personalData.avatar);
+    //         // let blob = new Blob([this.personalData.avatar], {
+    //         //   type: "image/jpeg",
+    //         // });
+
+    //         if (res.data.avatar) {
+    //           // this.profileUrl = "data:image/png;base64," + res.data.avatar;
+    //           this.Global_profilePool.setProfile(
+    //             this.authorInfo.id,
+    //             res.data.avatar
+    //           );
+    //         } else {
+    //           this.Global_profilePool.setProfile(
+    //             this.authorInfo.id,
+    //             "noProfile"
+    //           );
+    //         }
+
+    //         // this.profileUrl = "data:image/png;base64," +;
+    //         // console.log(this.personalData.avatar);
+    //         // console.log(blob);
+    //         //console.log(this.personalData.contact)
+    //         // this.form.contact = JSON.parse(
+    //         //   JSON.stringify(this.personalData.contact || {})
+    //         // );
+    //       }
+    //     });
+    //   } else {
+    //     // if (profile == "loading") {
+    //     //   return;
+    //     // } else
+    //     if (profile == "noProfile") {
+    //       this.profileUrl =
+    //         "https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png";
+    //       return;
+    //     }
+    //     this.profileUrl = "data:image/png;base64," + profile;
+    //   }
+    // },
     toRead(id) {
       console.log("toread/", this.$route.fullPath);
       this.$store.commit("setNeedBack", true);

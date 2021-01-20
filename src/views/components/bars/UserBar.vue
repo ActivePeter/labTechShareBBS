@@ -59,38 +59,70 @@ export default {
   mounted() {
     Util.$on("GlobalMsg_onLogin", (_) => {
       console.log("GlobalMsg_onLogin");
-      this.loadProfile();
+      this.getProfile(this.$store.getters.userinfo.id);
+    });
+    Util.$on("GlobalMsg_profileUpdate", (id) => {
+      if (
+        this.$store.getters.isLogin &&
+        this.$store.getters.userinfo.id == id
+      ) {
+        console.log("GlobalMsg_profileUpdate");
+        this.getProfile(id);
+        // var profile = this.Global_profilePool.getProfile(id);
+        // if (profile) {
+        //   // if (profile == "loading") {
+        //   //   return;
+        //   // } else
+        //   if (profile == "noProfile") {
+        //     this.profileUrl =
+        //       "https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png";
+        //     return;
+        //   }
+        //   this.profileUrl = "data:image/png;base64," + profile;
+        // }
+      }
+      // this.loadProfile();
     });
     // console.log(this.$store.getters.userinfo);
-    this.loadProfile();
+    if (this.$store.getters.isLogin) {
+      this.getProfile(this.$store.getters.userinfo.id);
+    }
   },
   methods: {
-    loadProfile() {
-      if (this.$store.getters.isLogin) {
-        LoadPersonInfo(this.$store.getters.userinfo.id).then((res) => {
-          if (res.data) {
-            // // console.log(this.personalData.avatar);
-            // let blob = new Blob([this.personalData.avatar], {
-            //   type: "image/jpeg",
-            // });
-            if (res.data.avatar) {
-              this.profileUrl = "data:image/png;base64," + res.data.avatar;
-            } else {
-              this.profileUrl =
-                "https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png";
-            }
-            // this.profileUrl = "data:image/png;base64," + res.data.avatar;
-            // this.profileUrl = "data:image/png;base64," +;
-            // console.log(this.personalData.avatar);
-            // console.log(blob);
-            //console.log(this.personalData.contact)
-            // this.form.contact = JSON.parse(
-            //   JSON.stringify(this.personalData.contact || {})
-            // );
-          }
-        });
-      }
+    getProfile(id) {
+      var profile = this.Global_profilePool.getProfileLazy(id);
+      // if (!profile) {
+      //   this.profileUrl = this.Global_profilePool.getDefaultProfileUrl();
+      // } else {
+      this.profileUrl = profile;
+      // }
     },
+    // loadProfile() {
+    //   if (this.$store.getters.isLogin) {
+    //     LoadPersonInfo(this.$store.getters.userinfo.id).then((res) => {
+    //       if (res.data) {
+    //         // // console.log(this.personalData.avatar);
+    //         // let blob = new Blob([this.personalData.avatar], {
+    //         //   type: "image/jpeg",
+    //         // });
+    //         if (res.data.avatar) {
+    //           this.profileUrl = "data:image/png;base64," + res.data.avatar;
+    //         } else {
+    //           this.profileUrl =
+    //             "https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png";
+    //         }
+    //         // this.profileUrl = "data:image/png;base64," + res.data.avatar;
+    //         // this.profileUrl = "data:image/png;base64," +;
+    //         // console.log(this.personalData.avatar);
+    //         // console.log(blob);
+    //         //console.log(this.personalData.contact)
+    //         // this.form.contact = JSON.parse(
+    //         //   JSON.stringify(this.personalData.contact || {})
+    //         // );
+    //       }
+    //     });
+    //   }
+    // },
     ShowLogin() {
       this.$refs.LoginDialogue.loginState = true;
       this.$refs.LoginDialogue.dialogVisible = true;
